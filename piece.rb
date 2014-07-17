@@ -60,6 +60,18 @@ class Piece
     end
   end
 
+  def dup(board)
+    dup_piece = Piece.new(board, self.position, self.color)
+    dup_piece.king = self.king
+    dup_piece
+  end
+
+  def render
+    self.king ? SYMBOLS[:king].colorize(@color) : SYMBOLS[@color]
+  end
+
+  private
+
   def slide(new_pos)
     if slide_moves.include?(new_pos)
       make_move(new_pos)
@@ -126,11 +138,6 @@ class Piece
     false
   end
 
-  def render
-    self.king ? SYMBOLS[:king].colorize(@color) : SYMBOLS[@color]
-  end
-
 end
-
 
 

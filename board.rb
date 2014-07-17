@@ -51,8 +51,7 @@ class Board
   def dup
     Board.new(true).tap do |dup_board|
       self.each_with_index do |obj, row, col|
-        dup_board[[row, col]] =
-          Piece.new(dup_board, obj.position, obj.color) unless obj.nil?
+        dup_board[[row, col]] = obj.dup(dup_board) unless obj.nil?
       end
     end
   end

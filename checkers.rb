@@ -17,14 +17,13 @@ class Checkers
 
   def initialize
     @board = Board.new
-    @turn = :red
+    @turn = :black
   end
 
   def play
     puts "Welcome to Checkers! To save your game, type 'save' at any time.\n"
 
     until @board.game_over?
-      toggle_turn
 
       @board.display
       puts "#{@turn.upcase} to move."
@@ -39,18 +38,21 @@ class Checkers
         end
 
         @board[start_pos].perform_moves(moves)
-      rescue IllegalMoveError
-        puts "That's not a valid move!"
-        retry
+      # rescue IllegalMoveError
+      #   puts "That's not a valid move!"
+      #   retry
       end
+
+      toggle_turn
     end
 
+    toggle_turn
     puts "#{@turn.upcase} wins!"
   end
 
   def get_user_input
     begin
-      print "Enter the position of the piece you want to move (ex: C3) "
+      print "Enter the position of the piece you want to move (ex: C3): "
       input = gets.chomp.upcase
 
       return input if input == "SAVE"
@@ -62,7 +64,7 @@ class Checkers
       retry
     end
 
-    print "Enter a move or a sequence of moves (ex: E5 C7) "
+    print "Enter a move or a sequence of moves (ex: E5 C7): "
     moves = gets.chomp.upcase.split(/ /)
     moves.map! { |move| convert_user_input(move) }
 
