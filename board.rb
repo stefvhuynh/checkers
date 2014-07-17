@@ -24,27 +24,35 @@ class Board
   end
 
   def valid_pos?(pos)
-    return (in_bounds?(pos) && !pos_occupied?(pos)) ? true : false
+    (in_bounds?(pos) && !pos_occupied?(pos)) ? true : false
+  end
+
+  def each_row(&blk)
+    @grid.each { |row| blk.call(row) }
   end
 
   def pos_occupied?(pos)
-    return self[pos].nil? ? false : true
+    self[pos].nil? ? false : true
   end
 
   def in_bounds?(pos)
     row, col = pos
-    return (row.between?(0, 7) && col.between?(0, 7)) ? true : false
+    (row.between?(0, 7) && col.between?(0, 7)) ? true : false
   end
 
 end
 
 
 b = Board.new
-p1 = Piece.new(b, [0, 1], :black)
+p1 = Piece.new(b, [2, 3], :black)
 p2 = Piece.new(b, [1, 2], :red)
+p3 = Piece.new(b, [3, 2], :red)
 b[p1.position] = p1
 b[p2.position] = p2
-p p1.moves
+b[p3.position] = p3
+# p1.jump([4, 1])
+p1.perform_moves!([[4, 1]])
+b.each_row { |row| p row }
 
 
 
