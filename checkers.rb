@@ -38,9 +38,9 @@ class Checkers
         end
 
         @board[start_pos].perform_moves(moves)
-      # rescue IllegalMoveError
-      #   puts "That's not a valid move!"
-      #   retry
+      rescue IllegalMoveError
+        puts "That's not a valid move! Remember, you must jump if you can."
+        retry
       end
 
       toggle_turn
@@ -58,9 +58,11 @@ class Checkers
       return input if input == "SAVE"
 
       start_pos = convert_user_input(input)
-      raise UserError if @board[start_pos].nil?
+      if @board[start_pos].nil? || @board[start_pos].color != @turn
+        raise UserError
+      end
     rescue UserError
-      puts "No piece there!"
+      puts "Choose one of your pieces!"
       retry
     end
 

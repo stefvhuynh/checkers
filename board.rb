@@ -48,6 +48,16 @@ class Board
     (red_count == 12 || black_count == 12) ? true : false
   end
 
+  def jumps_available?(color)
+    self.each do |obj|
+      if !obj.nil? && obj.color == color && !obj.jump_moves.empty?
+        return true
+      end
+    end
+
+    false
+  end
+
   def dup
     Board.new(true).tap do |dup_board|
       self.each_with_index do |obj, row, col|
@@ -59,6 +69,12 @@ class Board
   def each_index(&blk)
     @grid.each_with_index do |row, row_i|
       row.each_index { |col_i| blk.call(row_i, col_i) }
+    end
+  end
+
+  def each(&blk)
+    @grid.each do |row|
+      row.each { |obj| blk.call(obj) }
     end
   end
 

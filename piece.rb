@@ -44,19 +44,13 @@ class Piece
   end
 
   def perform_moves!(move_sequence)
-    if move_sequence.length == 1
-      begin
-        slide(move_sequence.first)
-        # Rescue the error if Piece#slide does not work and try Piece#jump.
-        # Piece#jump can still raise an error, which we will catch in
-        # Piece#valid_move_seq?.
-      rescue IllegalMoveError
-        jump(move_sequence.first)
-      end
-    else
-      # If there is an error in one of these iterations, it will be caught in
-      # Piece#valid_move_seq?.
+    # Try to perform a Piece#slide move. If it fails, try a Piece@jump move
+    # check if there are available jumps at the ending position.
+    begin
+      slide(move_sequence.first)
+    rescue IllegalMoveError
       move_sequence.each { |move| jump(move) }
+      raise IllegalMoveError unless jump_moves.empty?
     end
   end
 
@@ -70,10 +64,12 @@ class Piece
     self.king ? SYMBOLS[:king].colorize(@color) : SYMBOLS[@color]
   end
 
-  private
-
   def slide(new_pos)
-    if slide_moves.include?(new_pos)
+    # If a Piece#slide move is attempted, check the board for available
+    # jumps first.
+    if @board.jumps_available?(self.color)
+      raise IllegalMoveError
+    elsif slide_moves.include?(new_pos)
       make_move(new_pos)
     else
       raise IllegalMoveError
