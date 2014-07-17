@@ -6,8 +6,11 @@ class Board
     Array.new(8) { Array.new(8) }
   end
 
+  attr_accessor :taken_pieces
+
   def initialize
     @grid = self.class.generate_grid
+    @taken_pieces = []
   end
 
   def [](pos)
@@ -20,8 +23,8 @@ class Board
     @grid[row][col] = obj
   end
 
-  def pos_occupied_by?(pos, color)
-    return (pos_occupied?(pos) && self[pos].color == color) ? true : false
+  def valid_pos?(pos)
+    return (in_bounds?(pos) && !pos_occupied?(pos)) ? true : false
   end
 
   def pos_occupied?(pos)
@@ -41,7 +44,7 @@ p1 = Piece.new(b, [0, 1], :black)
 p2 = Piece.new(b, [1, 2], :red)
 b[p1.position] = p1
 b[p2.position] = p2
-p p1.slide_moves + p1.jump_moves
+p p1.moves
 
 
 
