@@ -83,11 +83,4 @@ class Board
 end
 
 
-b = Board.new
-d = b.dup
-b[[0, 1]].position = [3, 2]
-b.each_row { |row| p row }
-d.each_row { |row| p row }
-
-
 

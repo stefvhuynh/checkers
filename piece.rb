@@ -17,26 +17,39 @@ class Piece
     @king = false
   end
 
-  def valid_move_seq?(move_sequence)
+  def perform_moves(move_sequence)
+    if valid_move_seq?(move_sequence)
+      perform_moves!(move_sequence)
+    else
+      raise IllegalMoveError
+    end
+  end
 
+  def valid_move_seq?(move_sequence)
+    begin
+      dup_board = @board.dup
+      dup_board[self.position].perform_moves!(move_sequence)
+    rescue IllegalMoveError
+      false
+    else
+      true
+    end
   end
 
   def perform_moves!(move_sequence)
     if move_sequence.length == 1
       begin
         slide(move_sequence.first)
+        # Rescue the error if Piece#slide does not work and try Piece#jump.
+        # Piece#jump can still raise an error, which we will catch in
+        # Piece#valid_move_seq?.
       rescue IllegalMoveError
         jump(move_sequence.first)
       end
     else
-      begin
-        move_sequence.each { |move| jump(move) }
-      rescue IllegalMoveError
-      end
+      move_sequence.each { |move| jump(move) }
     end
   end
-
-  private
 
   def slide(new_pos)
     if slide_moves.include?(new_pos)
