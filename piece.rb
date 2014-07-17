@@ -18,19 +18,17 @@ class Piece
   end
 
   def slide(new_pos)
-    if moves.include?(new_pos)
-      # Set the board's new_pos to this piece, empty the space where this piece
-      # was, and reassign this piece's position attribute.
-      @board[new_pos] = self
-      @board[self.position] = nil
-      self.position = new_pos
-    else
-      raise IllegalMoveError
-    end
+    moves.include?(new_pos) ? make_move : raise IllegalMoveError
   end
 
   def jump(new_pos)
     if moves.include?(new_pos)
+      # Find the jumped piece by calculating the midpoint between the piece's
+      # current position and landing position.
+      jumped_piece_pos = [(self.position[0] + new_pos[0]) / 2,
+                          (self.position[1] + new_pos[1]) / 2]
+      @board[jumped_piece_pos] = nil
+      make_move
     else
       raise IllegalMoveError
     end
@@ -51,6 +49,16 @@ class Piece
         moves << jump_move
       end
     end
+  end
+
+  private
+
+  def make_move
+    # Set the board's new_pos to this piece, empty the space where this piece
+    # was, and reassign this piece's position attribute.
+    @board[new_pos] = self
+    @board[self.position] = nil
+    self.position = new_pos
   end
 
 end
