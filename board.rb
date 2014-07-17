@@ -1,4 +1,5 @@
 require_relative "piece"
+require "colorize"
 
 class Board
 
@@ -49,15 +50,15 @@ class Board
     end
   end
 
-  def each(&blk)
-    @grid.each do |row|
-      row.each { |obj| blk.call(obj) }
-    end
-  end
+  # def each(&blk)
+  #   @grid.each do |row|
+  #     row.each { |obj| blk.call(obj) }
+  #   end
+  # end
 
-  def each_row(&blk)
-    @grid.each { |row| blk.call(row) }
-  end
+  # def each_row(&blk)
+  #   @grid.each { |row| blk.call(row) }
+  # end
 
   def each_index(&blk)
     @grid.each_with_index do |row, row_i|
@@ -80,7 +81,30 @@ class Board
     (row.between?(0, 7) && col.between?(0, 7)) ? true : false
   end
 
-end
+  def display
+    puts render
+  end
 
+  def render
+    rendered = ""
+    self.each_with_index do |obj, row, col|
+      # Colorize the backgrounds for odd spaces.
+      if (row + col).odd?
+        if obj.nil?
+          rendered += "   ".colorize(:background => :white)
+        else
+          rendered += obj.render.colorize(:background => :white)
+        end
+      else
+        rendered += obj.nil? ? "   " : obj.render
+      end
+
+      rendered += "\n" if col == 7
+    end
+
+    rendered
+  end
+
+end
 
 

@@ -3,3 +3,5 @@ class IllegalMoveError < StandardError
     super
   end
 end
+
+

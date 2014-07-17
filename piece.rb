@@ -1,4 +1,5 @@
 require_relative "illegal_move_error"
+require "colorize"
 
 class Piece
 
@@ -6,6 +7,12 @@ class Piece
     :red   => [[-1, 1], [-1, -1]],
     :black => [[1, 1], [1, -1]],
     :king  => [[1, 1], [1, -1], [-1, 1], [-1, -1]]
+  }
+
+  UNICODE = {
+    :red => " ⚈ ".colorize(:red),
+    :black => " ⚈ ".colorize(:black),
+    :king => " ⚈ "
   }
 
   attr_accessor :position, :king
@@ -47,6 +54,8 @@ class Piece
         jump(move_sequence.first)
       end
     else
+      # If there is an error in one of these iterations, it will be caught in
+      # Piece#valid_move_seq?.
       move_sequence.each { |move| jump(move) }
     end
   end
@@ -67,6 +76,7 @@ class Piece
                           (self.position[1] + new_pos[1]) / 2]
       @board.taken_pieces << @board[jumped_piece_pos]
       @board[jumped_piece_pos] = nil
+
       make_move(new_pos)
     else
       raise IllegalMoveError
@@ -74,19 +84,23 @@ class Piece
   end
 
   def slide_moves
-    MOVE_DELTAS[color].each_with_object([]) do |(d_row, d_col), slide_moves|
+    # Have not tested this...
+    hash_key = @king ? :king : @color
+
+    MOVE_DELTAS[hash_key].each_with_object([]) do |(d_row, d_col), slide_moves|
       slide_move = [self.position[0] + d_row, self.position[1] + d_col]
       slide_moves << slide_move if @board.valid_pos?(slide_move)
     end
   end
 
   def jump_moves
-    MOVE_DELTAS[color].each_with_object([]) do |(d_row, d_col), jump_moves|
+    # Have not tested this...
+    hash_key = @king ? :king : @color
+
+    MOVE_DELTAS[hash_key].each_with_object([]) do |(d_row, d_col), jump_moves|
       jumped_pos = [self.position[0] + d_row, self.position[1] + d_col]
       jump_move = [self.position[0] + d_row * 2, self.position[1] + d_col * 2]
 
-      # If slide_move is valid then jump_move is automatically invalid because
-      # there is no piece to jump over.
       if @board.valid_pos?(jump_move) && @board.pos_occupied?(jumped_pos) &&
          @board[jumped_pos].color != self.color
 
@@ -115,8 +129,11 @@ class Piece
   end
 
   def inspect
-    {
-      position: self.position }.inspect
+    { :position => self.position }.inspect
+  end
+
+  def render
+    @king ? UNICODE[:king].colorize(@color) : UNICODE[@color]
   end
 
 end
