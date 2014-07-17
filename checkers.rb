@@ -5,13 +5,19 @@ class Checkers
 
   def initialize
     @board = Board.new
+    @turn = :red
   end
 
   def play
+    puts "Welcome to Checkers!"
 
-    until over?
+    until @board.game_over?
+      toggle_turn
+
+      @board.display
+      puts "#{@turn} to move."
+
       begin
-        @board.display
         start_pos, moves = get_user_input
         @board[start_pos].perform_moves(moves)
       rescue IllegalMoveError
@@ -20,9 +26,7 @@ class Checkers
       end
     end
 
-  end
-
-  def over?
+    puts "#{@turn} wins!"
   end
 
   def get_user_input
@@ -42,8 +46,10 @@ class Checkers
     [start_pos] + [moves]
   end
 
-end
+  def toggle_turn
+    @turn = (@turn == :black) ? :red : :black
+  end
 
-Checkers.new.play
+end
 
 

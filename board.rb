@@ -37,6 +37,17 @@ class Board
     end
   end
 
+  def game_over?
+    red_count, black_count = 0, 0
+
+    @taken_pieces.each do |piece|
+      red_count += 1 if piece.color == :red
+      black_count += 1 if piece.color == :black
+    end
+
+    (red_count == 12 || black_count == 12) ? true : false
+  end
+
   def valid_pos?(pos)
     (in_bounds?(pos) && !pos_occupied?(pos)) ? true : false
   end
@@ -49,16 +60,6 @@ class Board
       end
     end
   end
-
-  # def each(&blk)
-  #   @grid.each do |row|
-  #     row.each { |obj| blk.call(obj) }
-  #   end
-  # end
-
-  # def each_row(&blk)
-  #   @grid.each { |row| blk.call(row) }
-  # end
 
   def each_index(&blk)
     @grid.each_with_index do |row, row_i|

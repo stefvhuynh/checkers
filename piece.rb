@@ -12,7 +12,7 @@ class Piece
   UNICODE = {
     :red => " ⚈ ".colorize(:red),
     :black => " ⚈ ".colorize(:black),
-    :king => " ⚈ "
+    :king => " ❂ "
   }
 
   attr_accessor :position, :king
@@ -137,5 +137,6 @@ class Piece
   end
 
 end
+
 
 
