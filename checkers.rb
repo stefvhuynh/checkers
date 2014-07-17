@@ -1,6 +1,7 @@
 require_relative "board"
 require_relative "user_error"
 require "yaml"
+require "colorize"
 
 class Checkers
 
@@ -33,13 +34,14 @@ class Checkers
 
         if start_pos == "SAVE"
           save_game
-          puts "Game successfully saved!"
+          puts "Game successfully saved!".colorize(:blue)
           return
         end
 
         @board[start_pos].perform_moves(moves)
       rescue IllegalMoveError
-        puts "That's not a valid move! Remember, you must jump if you can."
+        puts "That's not a valid move! Remember, you must jump if " \
+             "you can.".colorize(:red)
         retry
       end
 
