@@ -9,7 +9,7 @@ class Piece
     :king  => [[1, 1], [1, -1], [-1, 1], [-1, -1]]
   }
 
-  UNICODE = {
+  SYMBOLS = {
     :red => " ⚈ ".colorize(:red),
     :black => " ⚈ ".colorize(:black),
     :king => " ❂ "
@@ -84,8 +84,7 @@ class Piece
   end
 
   def slide_moves
-    # Have not tested this...
-    hash_key = @king ? :king : @color
+    hash_key = self.king ? :king : @color
 
     MOVE_DELTAS[hash_key].each_with_object([]) do |(d_row, d_col), slide_moves|
       slide_move = [self.position[0] + d_row, self.position[1] + d_col]
@@ -94,8 +93,7 @@ class Piece
   end
 
   def jump_moves
-    # Have not tested this...
-    hash_key = @king ? :king : @color
+    hash_key = self.king ? :king : @color
 
     MOVE_DELTAS[hash_key].each_with_object([]) do |(d_row, d_col), jump_moves|
       jumped_pos = [self.position[0] + d_row, self.position[1] + d_col]
@@ -117,7 +115,7 @@ class Piece
     self.position = new_pos
 
     # Promote to king if this piece is in the right position.
-    @king = true if promote?
+    self.king = true if promote?
   end
 
   def promote?
@@ -128,12 +126,8 @@ class Piece
     false
   end
 
-  def inspect
-    { :position => self.position }.inspect
-  end
-
   def render
-    @king ? UNICODE[:king].colorize(@color) : UNICODE[@color]
+    self.king ? SYMBOLS[:king].colorize(@color) : SYMBOLS[@color]
   end
 
 end

@@ -7,7 +7,7 @@ class Board
     Array.new(8) { Array.new(8) }
   end
 
-  attr_accessor :taken_pieces
+  attr_reader :taken_pieces
 
   def initialize(blank = false)
     @grid = self.class.generate_grid
@@ -27,10 +27,10 @@ class Board
 
   def populate
     self.each_index do |row, col|
-      # Only populate every other position in the top three rows with black
+      # Only populate every other position in the top three rows with black.
       if row < 3 && (row + col).odd?
         self[[row, col]] = Piece.new(self, [row, col], :black)
-      # Only populate every other position in the bottom three rows with red
+      # Only populate every other position in the bottom three rows with red.
       elsif row > 4 && (row + col).odd?
         self[[row, col]] = Piece.new(self, [row, col], :red)
       end
@@ -48,12 +48,8 @@ class Board
     (red_count == 12 || black_count == 12) ? true : false
   end
 
-  def valid_pos?(pos)
-    (in_bounds?(pos) && !pos_occupied?(pos)) ? true : false
-  end
-
   def dup
-    Board.new(blank = true).tap do |dup_board|
+    Board.new(true).tap do |dup_board|
       self.each_with_index do |obj, row, col|
         dup_board[[row, col]] =
           Piece.new(dup_board, obj.position, obj.color) unless obj.nil?
@@ -77,9 +73,12 @@ class Board
     self[pos].nil? ? false : true
   end
 
+  def valid_pos?(pos)
+    (in_bounds?(pos) && !pos_occupied?(pos)) ? true : false
+  end
+
   def in_bounds?(pos)
-    row, col = pos
-    (row.between?(0, 7) && col.between?(0, 7)) ? true : false
+    pos.all? { |coord| coord.between?(0, 7) }
   end
 
   def display
@@ -87,8 +86,11 @@ class Board
   end
 
   def render
-    rendered = ""
+    rendered = "   A  B  C  D  E  F  G  H\n"
+
     self.each_with_index do |obj, row, col|
+      rendered += "#{8 - row} " if col == 0
+
       # Colorize the backgrounds for odd spaces.
       if (row + col).odd?
         if obj.nil?
