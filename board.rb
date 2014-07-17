@@ -8,10 +8,10 @@ class Board
 
   attr_accessor :taken_pieces
 
-  def initialize
+  def initialize(blank = false)
     @grid = self.class.generate_grid
     @taken_pieces = []
-    populate
+    populate if !blank
   end
 
   def [](pos)
@@ -40,10 +40,14 @@ class Board
     (in_bounds?(pos) && !pos_occupied?(pos)) ? true : false
   end
 
-  # def dup
-  #   dupped_board = Board.new
-  #   self.each { |obj|  }
-  # end
+  def dup
+    Board.new(blank = true).tap do |dup_board|
+      self.each_with_index do |obj, row, col|
+        dup_board[[row, col]] =
+          Piece.new(dup_board, obj.position, obj.color) unless obj.nil?
+      end
+    end
+  end
 
   def each(&blk)
     @grid.each do |row|
@@ -61,6 +65,12 @@ class Board
     end
   end
 
+  def each_with_index(&blk)
+    @grid.each_with_index do |row, row_i|
+      row.each_with_index { |obj, col_i| blk.call(obj, row_i, col_i) }
+    end
+  end
+
   def pos_occupied?(pos)
     self[pos].nil? ? false : true
   end
@@ -74,7 +84,10 @@ end
 
 
 b = Board.new
+d = b.dup
+b[[0, 1]].position = [3, 2]
 b.each_row { |row| p row }
+d.each_row { |row| p row }
 
 
 
