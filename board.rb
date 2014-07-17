@@ -11,6 +11,7 @@ class Board
   def initialize
     @grid = self.class.generate_grid
     @taken_pieces = []
+    populate
   end
 
   def [](pos)
@@ -23,12 +24,41 @@ class Board
     @grid[row][col] = obj
   end
 
+  def populate
+    self.each_index do |row, col|
+      # Only populate every other position in the top three rows with black
+      if row < 3 && (row + col).odd?
+        self[[row, col]] = Piece.new(self, [row, col], :black)
+      # Only populate every other position in the bottom three rows with red
+      elsif row > 4 && (row + col).odd?
+        self[[row, col]] = Piece.new(self, [row, col], :red)
+      end
+    end
+  end
+
   def valid_pos?(pos)
     (in_bounds?(pos) && !pos_occupied?(pos)) ? true : false
   end
 
+  # def dup
+  #   dupped_board = Board.new
+  #   self.each { |obj|  }
+  # end
+
+  def each(&blk)
+    @grid.each do |row|
+      row.each { |obj| blk.call(obj) }
+    end
+  end
+
   def each_row(&blk)
     @grid.each { |row| blk.call(row) }
+  end
+
+  def each_index(&blk)
+    @grid.each_with_index do |row, row_i|
+      row.each_index { |col_i| blk.call(row_i, col_i) }
+    end
   end
 
   def pos_occupied?(pos)
@@ -44,14 +74,6 @@ end
 
 
 b = Board.new
-p1 = Piece.new(b, [2, 3], :black)
-p2 = Piece.new(b, [1, 2], :red)
-p3 = Piece.new(b, [3, 2], :red)
-b[p1.position] = p1
-b[p2.position] = p2
-b[p3.position] = p3
-# p1.jump([4, 1])
-p1.perform_moves!([[4, 1]])
 b.each_row { |row| p row }
 
 

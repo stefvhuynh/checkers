@@ -18,6 +18,7 @@ class Piece
   end
 
   def valid_move_seq?(move_sequence)
+
   end
 
   def perform_moves!(move_sequence)
@@ -28,9 +29,14 @@ class Piece
         jump(move_sequence.first)
       end
     else
-      move_sequence.each { |move| jump(move) }
+      begin
+        move_sequence.each { |move| jump(move) }
+      rescue IllegalMoveError
+      end
     end
   end
+
+  private
 
   def slide(new_pos)
     if slide_moves.include?(new_pos)
@@ -76,8 +82,6 @@ class Piece
     end
   end
 
-  private
-
   def make_move(new_pos)
     # Set the board's new_pos to this piece, empty the space where this piece
     # was, and reassign this piece's position attribute.
@@ -98,7 +102,7 @@ class Piece
   end
 
   def inspect
-    { color: self.color,
+    {
       position: self.position }.inspect
   end
 
