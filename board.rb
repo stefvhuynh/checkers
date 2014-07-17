@@ -20,6 +20,10 @@ class Board
     @grid[row][col] = obj
   end
 
+  def pos_occupied_by?(pos, color)
+    return (pos_occupied?(pos) && self[pos].color == color) ? true : false
+  end
+
   def pos_occupied?(pos)
     return self[pos].nil? ? false : true
   end
@@ -37,7 +41,7 @@ p1 = Piece.new(b, [0, 1], :black)
 p2 = Piece.new(b, [1, 2], :red)
 b[p1.position] = p1
 b[p2.position] = p2
-p p1.slide_moves
+p p1.slide_moves + p1.jump_moves
 
 
 
